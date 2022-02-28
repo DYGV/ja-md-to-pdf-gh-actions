@@ -1,0 +1,20 @@
+name: Markdown to PDF
+
+on: push
+
+jobs:
+  markdown_to_pdf_via_pandoc:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker://ghcr.io/dygv/pandoc/ja:latest
+        with: 
+          args: sample.md -o sample.pdf -f markdown --template eisvogel --listings --pdf-engine=xelatex --toc --listings -s -N -V linkcolor=blue -V toc-own-page=true -V titlepage=true -V CJKmainfont=IPAexGothic
+      - name: commit
+        run : |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit --author=. -m "update pdf"
+          git push
+
